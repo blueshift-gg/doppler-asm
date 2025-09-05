@@ -16,7 +16,7 @@ e:
   .equ INSTRUCTION_SEQUENCE, 0x50e0 // u64 (8 bytes)
   .equ INSTRUCTION_PRICE, 0x50e8 // u64 (8 bytes)
   ldxh r2, [r1+ADMIN_HEADER]
-  jne r2, 0x01ff, abort
+  jne r2, EXPECTED_ADMIN_HEADER, abort
   ldxdw r2, [r1+ADMIN_KEY_0]
   ldxdw r3, [r1+ADMIN_KEY_1]
   ldxdw r4, [r1+ADMIN_KEY_2]
