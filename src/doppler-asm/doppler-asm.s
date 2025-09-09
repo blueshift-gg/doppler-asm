@@ -15,25 +15,33 @@ e:
   .equ ORACLE_PRICE, 0x28c8 // u64 (8 bytes)
   .equ INSTRUCTION_SEQUENCE, 0x50e0 // u64 (8 bytes)
   .equ INSTRUCTION_PRICE, 0x50e8 // u64 (8 bytes)
+
   ldxh r2, [r1+ADMIN_HEADER]
   jne r2, EXPECTED_ADMIN_HEADER, abort
-  ldxdw r2, [r1+ADMIN_KEY_0]
+
+  lddw r2, EXPECTED_ADMIN_KEY_0
+  ldxdw r3, [r1+ADMIN_KEY_0]
+  jne r2, r3, abort
+  
+  lddw r2, EXPECTED_ADMIN_KEY_1
   ldxdw r3, [r1+ADMIN_KEY_1]
-  ldxdw r4, [r1+ADMIN_KEY_2]
-  ldxdw r5, [r1+ADMIN_KEY_3]
-  lddw r6, EXPECTED_ADMIN_KEY_0
-  lddw r7, EXPECTED_ADMIN_KEY_1
-  lddw r8, EXPECTED_ADMIN_KEY_2
-  lddw r9, EXPECTED_ADMIN_KEY_3
-  jne r2, r6, abort
-  jne r3, r7, abort
-  jne r4, r8, abort
-  jne r5, r9, abort
+  jne r2, r3, abort
+
+  lddw r2, EXPECTED_ADMIN_KEY_2 
+  ldxdw r3, [r1+ADMIN_KEY_2]
+  jne r2, r3, abort
+
+  lddw r2, EXPECTED_ADMIN_KEY_3
+  ldxdw r3, [r1+ADMIN_KEY_3]
+  jne r2, r3, abort
+
   ldxdw r2, [r1+INSTRUCTION_SEQUENCE]
   ldxdw r3, [r1+ORACLE_SEQUENCE]
   jgt r2, r3, update
+
 abort:
   mov32 r0, 1
+  
 update:
   stxdw [r1+ORACLE_SEQUENCE], r2
   ldxdw r2, [r1+INSTRUCTION_PRICE]
