@@ -41,6 +41,7 @@ e:
 
 abort:
   mov32 r0, 1
+  exit
   
 update:
   stxdw [r1+ORACLE_SEQUENCE], r2
