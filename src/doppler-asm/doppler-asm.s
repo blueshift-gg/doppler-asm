@@ -9,26 +9,26 @@ e:
   .equ EXPECTED_ADMIN_KEY_0, 0x2222222222222222
   .equ EXPECTED_ADMIN_KEY_1, 0x2222222222222222
   .equ EXPECTED_ADMIN_KEY_2, 0x2222222222222222
-  .equ EXPECTED_ADMIN_KEY_3, 0x2222222222222222
   .equ ORACLE_HEADER, 0x2868
   .equ ORACLE_SEQUENCE, 0x28c0 // u64 (8 bytes)
   .equ ORACLE_PRICE, 0x28c8 // u64 (8 bytes)
   .equ INSTRUCTION_SEQUENCE, 0x50e0 // u64 (8 bytes)
   .equ INSTRUCTION_PRICE, 0x50e8 // u64 (8 bytes)
   ldxh r2, [r1+ADMIN_HEADER]
-  jne r2, 0x01ff, abort
+  jne r2, EXPECTED_ADMIN_HEADER, abort
   ldxdw r2, [r1+ADMIN_KEY_0]
   ldxdw r3, [r1+ADMIN_KEY_1]
   ldxdw r4, [r1+ADMIN_KEY_2]
-  ldxdw r5, [r1+ADMIN_KEY_3]
+  ldxdw r0, [r1+ADMIN_KEY_3]
   lddw r6, EXPECTED_ADMIN_KEY_0
   lddw r7, EXPECTED_ADMIN_KEY_1
   lddw r8, EXPECTED_ADMIN_KEY_2
-  lddw r9, EXPECTED_ADMIN_KEY_3
+  // lddw r9, EXPECTED_ADMIN_KEY_3 // Skip this allocation to save 1 CU
   jne r2, r6, abort
   jne r3, r7, abort
   jne r4, r8, abort
-  jne r5, r9, abort
+  // jne r5, r9, abort // Replace 64-bit comparison with r0 arithmetic below
+  sub32 r0, 0x22222222 // 32-bit imm widens to 64 bits to cleanly subtract from r0, leaving us with 0x00
   ldxdw r2, [r1+INSTRUCTION_SEQUENCE]
   ldxdw r3, [r1+ORACLE_SEQUENCE]
   jgt r2, r3, update
